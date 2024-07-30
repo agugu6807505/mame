@@ -60,6 +60,7 @@ public:
 	static void sound_hook();
 	static void layout_script_cb(layout_file &file, const char *script);
 	static bool standalone();
+	static char* myosd_droid_version;
 };
 
 

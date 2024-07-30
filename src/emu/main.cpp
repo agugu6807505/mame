@@ -38,3 +38,5 @@ http_manager *machine_manager::http()
 {
   return m_http.get();
 }
+
+char* emulator_info::myosd_droid_version = nullptr;

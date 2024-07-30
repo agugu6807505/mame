@@ -59,6 +59,12 @@ function maintargetosdoptions(_target,_subtarget)
 		addoptionsfromstring(str)
 	end
 
+	if _OPTIONS["targetos"] == "android" then
+		links {
+			"OpenSLES",
+		}
+	end
+
 	if _OPTIONS["targetos"]=="windows" then
 		if _OPTIONS["USE_LIBSDL"]~="1" then
 			configuration { "mingw*"}
@@ -283,7 +289,7 @@ if BASE_TARGETOS=="unix" then
 				"/usr/openwin/lib",
 			}
 		end
-		local str = backtick(sdlconfigcmd() .. " --libs")
+		local str = backtick(sdlconfigcmd() .. " --static-libs")
 		addlibfromstring(str)
 		addoptionsfromstring(str)
 
@@ -346,65 +352,40 @@ project ("osd_" .. _OPTIONS["osd"])
 		MAME_DIR .. "src/osd/modules/render",
 		MAME_DIR .. "3rdparty",
 		MAME_DIR .. "src/osd/sdl",
+		MAME_DIR .. "src/frontend/mame",
+		MAME_DIR .. "src/osd/myosd",
+		MAME_DIR .. "src/osd/myosd/file",
 	}
 
-	if _OPTIONS["targetos"]=="macosx" then
+	if _OPTIONS["targetos"]=="android" then
 		files {
-			MAME_DIR .. "src/osd/modules/debugger/debugosx.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/breakpointsview.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/breakpointsview.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/consoleview.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/consoleview.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/debugcommandhistory.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/debugcommandhistory.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/debugconsole.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/debugconsole.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/debugview.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/debugview.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/debugwindowhandler.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/debugwindowhandler.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/deviceinfoviewer.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/deviceinfoviewer.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/devicesviewer.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/devicesviewer.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/disassemblyview.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/disassemblyviewer.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/disassemblyviewer.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/errorlogview.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/errorlogview.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/disassemblyview.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/errorlogviewer.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/errorlogviewer.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/memoryview.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/memoryview.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/memoryviewer.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/memoryviewer.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/pointsviewer.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/pointsviewer.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/registerpointsview.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/registerpointsview.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/registersview.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/registersview.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/watchpointsview.mm",
-			MAME_DIR .. "src/osd/modules/debugger/osx/watchpointsview.h",
-			MAME_DIR .. "src/osd/modules/debugger/osx/debugosx.h",
+			MAME_DIR .. "src/osd/myosd/input.cpp",
+			MAME_DIR .. "src/osd/myosd/myosd-droid.cpp",
+			MAME_DIR .. "src/osd/myosd/myosd-droid.h",
+			MAME_DIR .. "src/osd/myosd/myosd.h",
+			MAME_DIR .. "src/osd/myosd/myosdmain.cpp",
+			MAME_DIR .. "src/osd/myosd/myosd_saf.h",
+			MAME_DIR .. "src/osd/myosd/opensl_snd.cpp",
+			MAME_DIR .. "src/osd/myosd/opensl_snd.h",
+			MAME_DIR .. "src/osd/myosd/sound.cpp",
+			--MAME_DIR .. "src/osd/myosd/ui.bdc",
+			MAME_DIR .. "src/osd/myosd/video.cpp",
+			MAME_DIR .. "src/osd/osdepend.h",
+			--MAME_DIR .. "src/osd/modules/osdwindow.cpp",
+			--MAME_DIR .. "src/osd/modules/osdwindow.h",
+			--SDL
+			--MAME_DIR .. "src/osd/sdl/android_main.cpp",
+			--MAME_DIR .. "src/osd/sdl/osdsdl.cpp",
+			--MAME_DIR .. "src/osd/sdl/osdsdl.h",
+			--MAME_DIR .. "src/osd/sdl/sdlmain.cpp",
+			--MAME_DIR .. "src/osd/sdl/sdlopts.cpp",
+			--MAME_DIR .. "src/osd/sdl/sdlopts.h",
+			MAME_DIR .. "src/osd/sdl/sdlprefix.h",
+			--MAME_DIR .. "src/osd/sdl/video.cpp",
+			--MAME_DIR .. "src/osd/sdl/window.cpp",
+			--MAME_DIR .. "src/osd/sdl/window.h",
 		}
 	end
-
-	files {
-		MAME_DIR .. "src/osd/osdepend.h",
-		MAME_DIR .. "src/osd/modules/osdwindow.cpp",
-		MAME_DIR .. "src/osd/modules/osdwindow.h",
-		MAME_DIR .. "src/osd/sdl/osdsdl.cpp",
-		MAME_DIR .. "src/osd/sdl/osdsdl.h",
-		MAME_DIR .. "src/osd/sdl/sdlmain.cpp",
-		MAME_DIR .. "src/osd/sdl/sdlopts.cpp",
-		MAME_DIR .. "src/osd/sdl/sdlopts.h",
-		MAME_DIR .. "src/osd/sdl/sdlprefix.h",
-		MAME_DIR .. "src/osd/sdl/video.cpp",
-		MAME_DIR .. "src/osd/sdl/window.cpp",
-		MAME_DIR .. "src/osd/sdl/window.h",
-	}
 
 project ("ocore_" .. _OPTIONS["osd"])
 	targetsubdir(_OPTIONS["target"] .."_" .. _OPTIONS["subtarget"])
@@ -423,9 +404,13 @@ project ("ocore_" .. _OPTIONS["osd"])
 		MAME_DIR .. "src/lib",
 		MAME_DIR .. "src/lib/util",
 		MAME_DIR .. "src/osd/sdl",
+		--MAME_DIR .. "src/osd/sdl",
+		MAME_DIR .. "src/osd/myosd",
+		MAME_DIR .. "src/osd/myosd/file",
 	}
 
 	files {
+		MAME_DIR .. "src/osd/myosd/myosd_core.h",
 		MAME_DIR .. "src/osd/osdcore.cpp",
 		MAME_DIR .. "src/osd/osdcore.h",
 		MAME_DIR .. "src/osd/osdfile.h",
@@ -435,34 +420,19 @@ project ("ocore_" .. _OPTIONS["osd"])
 		MAME_DIR .. "src/osd/osdsync.h",
 		MAME_DIR .. "src/osd/modules/osdmodule.cpp",
 		MAME_DIR .. "src/osd/modules/osdmodule.h",
-		MAME_DIR .. "src/osd/modules/lib/osdlib_" .. SDLOS_TARGETOS .. ".cpp",
+		--MAME_DIR .. "src/osd/modules/lib/osdlib_" .. SDLOS_TARGETOS .. ".cpp",
+		MAME_DIR .. "src/osd/myosd/osdlib.cpp",
 		MAME_DIR .. "src/osd/modules/lib/osdlib.h",
 	}
+	if _OPTIONS["targetos"]=="android" then
+		files {
 
-	if BASE_TARGETOS=="unix" then
-		files {
-			MAME_DIR .. "src/osd/modules/file/posixdir.cpp",
-			MAME_DIR .. "src/osd/modules/file/posixfile.cpp",
-			MAME_DIR .. "src/osd/modules/file/posixfile.h",
-			MAME_DIR .. "src/osd/modules/file/posixptty.cpp",
-			MAME_DIR .. "src/osd/modules/file/posixsocket.cpp",
-		}
-	elseif BASE_TARGETOS=="win32" then
-		includedirs {
-			MAME_DIR .. "src/osd/windows",
-		}
-		files {
-			MAME_DIR .. "src/osd/modules/file/windir.cpp",
-			MAME_DIR .. "src/osd/modules/file/winfile.cpp",
-			MAME_DIR .. "src/osd/modules/file/winfile.h",
-			MAME_DIR .. "src/osd/modules/file/winptty.cpp",
-			MAME_DIR .. "src/osd/modules/file/winsocket.cpp",
-			MAME_DIR .. "src/osd/windows/winutil.cpp", -- FIXME put the necessary functions somewhere more appropriate?
-			MAME_DIR .. "src/osd/windows/winutil.h",
-		}
-	else
-		files {
-			MAME_DIR .. "src/osd/modules/file/stdfile.cpp",
+		-- MyOsd
+		MAME_DIR .. "src/osd/myosd/file/posixdir.cpp",
+		MAME_DIR .. "src/osd/myosd/file/posixfile.cpp",
+		MAME_DIR .. "src/osd/myosd/file/posixfile.h",
+		MAME_DIR .. "src/osd/myosd/file/posixptty.cpp",
+		MAME_DIR .. "src/osd/myosd/file/posixsocket.cpp",
 		}
 	end
 

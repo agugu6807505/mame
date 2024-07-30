@@ -26,17 +26,30 @@ end
 
 	configuration { "android*" }
 		targetprefix "lib"
-		targetname "main"
+		targetname "MAME4droid"
 		targetextension ".so"
 		linkoptions {
 			"-shared",
-			"-Wl,-soname,libmain.so"
+			"-Wl,-soname,libMAME4droid.so",
+			--"-static",
+			"-static-libstdc++",  -- 静态链接标准 C++ 库
+			"-static-libgcc",     -- 静态链接 GCC 库
+			"-Wl,-Bstatic",       -- 强制静态链接
+			"$(SDL_INSTALL_ROOT)/lib/libSDL2.a",  -- 直接指定静态库文件路径
+			"-Wl,-Bdynamic",  -- 恢复正常链接
 		}
 		links {
 			"EGL",
 			"GLESv1_CM",
 			"GLESv2",
-			"SDL2",
+			"OpenSLES",
+			--"c++_static"
+		}
+		includedirs {
+			"$(SDL_INSTALL_ROOT)/include",
+		}
+		libdirs {
+			"$(SDL_INSTALL_ROOT)/lib"
 		}
 
 	configuration {  }
@@ -76,8 +89,11 @@ end
 	configuration { }
 
 	if _OPTIONS["targetos"]=="android" then
+		includedirs {
+		MAME_DIR .. "src/osd/myosd",
+		}
 		files {
-			MAME_DIR .. "src/osd/sdl/android_main.cpp",
+			MAME_DIR .. "src/osd/myosd/myosdmain.cpp",
 		}
 		targetsuffix ""
 		if _OPTIONS["SEPARATE_BIN"]~="1" then
@@ -87,9 +103,9 @@ end
 				os.copyfile(androidToolchainRoot() .. "/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so", MAME_DIR .. "android-project/app/src/main/libs/armeabi-v7a/libc++_shared.so")
 			end
 			if _OPTIONS["PLATFORM"]=="arm64" then
-				targetdir(MAME_DIR .. "android-project/app/src/main/libs/arm64-v8a")
-				os.copyfile(_OPTIONS["SDL_INSTALL_ROOT"] .. "/lib/libSDL2.so", MAME_DIR .. "android-project/app/src/main/libs/arm64-v8a/libSDL2.so")
-				os.copyfile(androidToolchainRoot() .. "/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so", MAME_DIR .. "android-project/app/src/main/libs/arm64-v8a/libc++_shared.so")
+				targetdir(MAME_DIR .. "android-MAME4droid/app/src/main/jniLibs/arm64-v8a")
+				--os.copyfile(_OPTIONS["SDL_INSTALL_ROOT"] .. "/lib/libSDL2.so", MAME_DIR .. "android-project/app/src/main/libs/arm64-v8a/libSDL2.so")
+				--os.copyfile(androidToolchainRoot() .. "/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so", MAME_DIR .. "android-project/app/src/main/libs/arm64-v8a/libc++_shared.so")
 			end
 			if _OPTIONS["PLATFORM"]=="x86" then
 				targetdir(MAME_DIR .. "android-project/app/src/main/libs/x86")

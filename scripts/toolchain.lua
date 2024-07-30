@@ -528,6 +528,8 @@ function toolchain(_buildDir, _subDir)
 	configuration { "android-arm64" }
 			buildoptions {
 				"--target=aarch64-none-linux-android" .. androidApiLevel,
+				"-march=armv8-a+sha2",
+				"-march=armv8-a+crypto",
 			}
 			linkoptions {
 				"--target=aarch64-none-linux-android" .. androidApiLevel,

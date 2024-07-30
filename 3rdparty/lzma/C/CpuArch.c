@@ -769,7 +769,7 @@ BoolInt CPU_IsSupported_AES (void) { return APPLE_CRYPTO_SUPPORT_VAL; }
 #include <asm/hwcap.h>
 
   #define MY_HWCAP_CHECK_FUNC_2(name1, name2) \
-  BoolInt CPU_IsSupported_ ## name1() { return (getauxval(AT_HWCAP)  & (HWCAP_  ## name2)) ? 1 : 0; }
+  BoolInt CPU_IsSupported_ ## name1(void) { return (getauxval(AT_HWCAP)  & (HWCAP_  ## name2)) ? 1 : 0; }
 
 #ifdef MY_CPU_ARM64
   #define MY_HWCAP_CHECK_FUNC(name) \
@@ -778,14 +778,14 @@ BoolInt CPU_IsSupported_AES (void) { return APPLE_CRYPTO_SUPPORT_VAL; }
 // MY_HWCAP_CHECK_FUNC (ASIMD)
 #elif defined(MY_CPU_ARM)
   #define MY_HWCAP_CHECK_FUNC(name) \
-  BoolInt CPU_IsSupported_ ## name() { return (getauxval(AT_HWCAP2) & (HWCAP2_ ## name)) ? 1 : 0; }
+  BoolInt CPU_IsSupported_ ## name(void) { return (getauxval(AT_HWCAP2) & (HWCAP2_ ## name)) ? 1 : 0; }
   MY_HWCAP_CHECK_FUNC_2(NEON, NEON)
 #endif
 
 #else // USE_HWCAP
 
   #define MY_HWCAP_CHECK_FUNC(name) \
-  BoolInt CPU_IsSupported_ ## name() { return 0; }
+  BoolInt CPU_IsSupported_ ## name(void) { return 0; }
   MY_HWCAP_CHECK_FUNC(NEON)
 
 #endif // USE_HWCAP
