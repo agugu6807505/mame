@@ -253,7 +253,7 @@ public:
 	DECLARE_INPUT_CHANGED_MEMBER(rsc_init_board);
 
 protected:
-	virtual void machine_start() override;
+	virtual void machine_start() override ATTR_COLD;
 
 	// devices/pointers
 	required_device<cpu_device> m_maincpu;
@@ -270,9 +270,9 @@ protected:
 	u8 m_inp_mux = 0;
 
 	// address maps
-	void csc_map(address_map &map);
-	void csce_map(address_map &map);
-	void rsc_map(address_map &map);
+	void csc_map(address_map &map) ATTR_COLD;
+	void csce_map(address_map &map) ATTR_COLD;
+	void rsc_map(address_map &map) ATTR_COLD;
 
 	// I/O handlers
 	u16 read_inputs();
@@ -506,7 +506,7 @@ void csc_state::csce_map(address_map &map)
 	map.unmap_value_high();
 	map(0x0000, 0x0fff).ram();
 	map(0x1000, 0x1003).rw(m_pia[1], FUNC(pia6821_device::read), FUNC(pia6821_device::write));
-	map(0x1800, 0x1803).w(m_pia[0], FUNC(pia6821_device::write)).r(FUNC(csc_state::pia0_read));
+	map(0x1800, 0x1803).rw(FUNC(csc_state::pia0_read), FUNC(csc_state::pia0_write));
 	map(0x2000, 0x3fff).rom();
 	map(0xa000, 0xffff).rom();
 }
@@ -515,7 +515,7 @@ void csc_state::rsc_map(address_map &map)
 {
 	map.unmap_value_high();
 	map(0x0000, 0x03ff).ram();
-	map(0x2000, 0x2003).w(m_pia[0], FUNC(pia6821_device::write)).r(FUNC(csc_state::pia0_read));
+	map(0x2000, 0x2003).rw(FUNC(csc_state::pia0_read), FUNC(csc_state::pia0_write));
 	map(0xf000, 0xffff).rom();
 }
 

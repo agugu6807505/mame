@@ -206,9 +206,9 @@ private:
 
 	void video_interrupt_in(int state);
 
-	void crumap(address_map &map);
-	void memmap(address_map &map);
-	void memmap_setaddress(address_map &map);
+	void crumap(address_map &map) ATTR_COLD;
+	void memmap(address_map &map) ATTR_COLD;
+	void memmap_setaddress(address_map &map) ATTR_COLD;
 
 	void    datamux_clock_in(int clock);
 
@@ -970,7 +970,7 @@ void ti99_4p_state::driver_start()
 	save_item(NAME(m_rom6_active));
 	save_item(NAME(m_rom6_upper));
 	save_item(NAME(m_dbin));
-	save_pointer(NAME(m_mapper),16);
+	save_item(NAME(m_mapper));
 }
 
 /*

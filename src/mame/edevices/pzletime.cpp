@@ -73,10 +73,10 @@ private:
 	tilemap_t *m_mid_tilemap = nullptr;
 	tilemap_t *m_txt_tilemap = nullptr;
 
-	void main_map(address_map &map);
-	virtual void machine_start() override;
-	virtual void machine_reset() override;
-	virtual void video_start() override;
+	void main_map(address_map &map) ATTR_COLD;
+	virtual void machine_start() override ATTR_COLD;
+	virtual void machine_reset() override ATTR_COLD;
+	virtual void video_start() override ATTR_COLD;
 
 	void mid_videoram_w(offs_t offset, uint16_t data, uint16_t mem_mask = ~0);
 	void txt_videoram_w(offs_t offset, uint16_t data, uint16_t mem_mask = ~0);
@@ -298,7 +298,7 @@ void pzletime_state::pzletime(machine_config &config)
 	PALETTE(config, m_palette[1], palette_device::RGB_555);
 
 	EEPROM_93C46_16BIT(config, "eeprom");
-	TICKET_DISPENSER(config, m_ticket, attotime::from_msec(2000), TICKET_MOTOR_ACTIVE_HIGH, TICKET_STATUS_ACTIVE_HIGH);
+	TICKET_DISPENSER(config, m_ticket, attotime::from_msec(2000));
 
 	SPEAKER(config, "mono").front_center();
 	OKIM6295(config, m_oki, 937500, okim6295_device::PIN7_HIGH); //freq & pin7 taken from stlforce

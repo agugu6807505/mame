@@ -133,8 +133,8 @@ public:
 	DECLARE_INPUT_CHANGED_MEMBER(change_cpu_freq);
 
 protected:
-	virtual void machine_start() override;
-	virtual void machine_reset() override;
+	virtual void machine_start() override ATTR_COLD;
+	virtual void machine_reset() override ATTR_COLD;
 
 	// devices/pointers
 	optional_device<i8255_device> m_ppi8255;
@@ -152,10 +152,10 @@ protected:
 	u8 m_inp_mux = 0;
 
 	// address maps
-	void pc_map(address_map &map);
-	void eas_map(address_map &map);
-	void eag_map(address_map &map);
-	void eag2100_map(address_map &map);
+	void pc_map(address_map &map) ATTR_COLD;
+	void eas_map(address_map &map) ATTR_COLD;
+	void eag_map(address_map &map) ATTR_COLD;
+	void eag2100_map(address_map &map) ATTR_COLD;
 
 	// I/O handlers
 	void update_display();
@@ -166,6 +166,12 @@ protected:
 	u8 ppi_portb_r();
 	void ppi_portc_w(u8 data);
 };
+
+
+
+/*******************************************************************************
+    Initialization
+*******************************************************************************/
 
 void elite_state::machine_start()
 {
@@ -617,7 +623,7 @@ ROM_START( feasbua ) // model EWC
 	ROM_CONTINUE( 0xd000, 0x0800 )
 	ROM_CONTINUE( 0xc800, 0x0800 )
 	ROM_CONTINUE( 0xd800, 0x0800 )
-	ROM_LOAD("green", 0xe000, 0x0800, CRC(c7bbfbbe) SHA1(63fe13d0e64d1e5c1ea1b4de13ac3e753797a992) ) // M5L2764K - only 4 bytes different to feasbu (after descramble)
+	ROM_LOAD("green", 0xe000, 0x0800, CRC(c7bbfbbe) SHA1(63fe13d0e64d1e5c1ea1b4de13ac3e753797a992) ) // M5L2764K - only 4 bytes different from feasbu (after descramble)
 	ROM_CONTINUE( 0xf000, 0x0800 )
 	ROM_CONTINUE( 0xe800, 0x0800 )
 	ROM_CONTINUE( 0xf800, 0x0800 )
@@ -685,7 +691,7 @@ ROM_START( feasglaa ) // model EAS-C
 	ROM_CONTINUE( 0x9000, 0x0800 )
 	ROM_CONTINUE( 0x8800, 0x0800 )
 	ROM_CONTINUE( 0x9800, 0x0800 )
-	ROM_LOAD("black", 0xc000, 0x0800, CRC(3f0b01b6) SHA1(fe8d214f1678e000ba945e2f6dc3438af97c6f33) ) // only 2 bytes different to feasgla
+	ROM_LOAD("black", 0xc000, 0x0800, CRC(3f0b01b6) SHA1(fe8d214f1678e000ba945e2f6dc3438af97c6f33) ) // only 2 bytes different from feasgla
 	ROM_CONTINUE( 0xd000, 0x0800 )
 	ROM_CONTINUE( 0xc800, 0x0800 )
 	ROM_CONTINUE( 0xd800, 0x0800 )
