@@ -23,7 +23,7 @@
     - A5105 has a FIFO bug with the RDAT, should be a lot larger when it scrolls up.
       Can be fixed with a DRDY mechanism for RDAT/WDAT;
     - Some later SWs on PC-98 throws "Invalid command byte 05" (zettmj on Epson logo),
-      actual undocumented command to reset something or perhaps just check if upd7220 isn't really a upd72120 instead?
+      actual undocumented command to reset something?
 
     - honor visible area
     - wide mode (32-bit access)
@@ -320,6 +320,12 @@ inline void upd7220_device::dequeue(uint8_t *data, int *flag)
 		if (m_fifo_ptr == -1)
 			m_sr &= ~UPD7220_SR_DATA_READY;
 	}
+	else
+	{
+		// TODO: underflow details
+		// pc9821:skinpan does SR checks over the wrong port during intro ...
+		*data = 0xff;
+	}
 }
 
 
@@ -329,7 +335,7 @@ inline void upd7220_device::dequeue(uint8_t *data, int *flag)
 
 inline void upd7220_device::update_vsync_timer(int state)
 {
-	int next_y = state ? m_vs : 0;
+	int next_y = state ? (m_vs + m_vbp) : 0;
 
 	attotime duration = screen().time_until_pos(next_y, 0);
 
@@ -1176,10 +1182,20 @@ void upd7220_device::process_fifo()
 
 			if (cr != COMMAND_RESET3)
 				m_de = 0;
-			m_ra[0] = m_ra[1] = m_ra[2] = 0;
-			m_ra[3] = 0x19;
+			// NOTE: a reset doesn't touch anything belonging to parameters, as stated in docs.
+			// pc9801:mightyhd won't program sad/len but just issue a reset after BIOS
+			// (which originally sets len = 0x1ff)
+			// with this on, it will len = 400 lines, repeating the bottommost two rows in a 432 setup.
+			//m_ra[0] = m_ra[1] = m_ra[2] = 0;
+			//m_ra[3] = 0x19;
 			m_ead = 0;
+			// TODO: very unlikely, should be 0xffff assuming it's even touched ...
 			m_mask = 0;
+			// FIFO, Command Processor and internal counters are cleared by this
+			// - pc9801rs BIOS starts up a DMAW command that spindiz2 will dislike during its boot sequences
+			m_sr &= ~UPD7220_SR_DRAWING_IN_PROGRESS;
+			fifo_clear();
+			stop_dma();
 			break;
 
 		case 9:
@@ -1365,9 +1381,19 @@ void upd7220_device::process_fifo()
 		break;
 
 	case COMMAND_PITCH: /* pitch specification */
-		if (flag == FIFO_PARAMETER)
+		// pc9801:burai writes a spurious extra value during intro, effectively ignored
+		// (only first value matters)
+		if (flag == FIFO_PARAMETER && m_param_ptr == 2)
 		{
 			m_pitch = (m_pitch & 0x100) | data;
+
+			if (m_pitch < 2)
+			{
+				// TODO: a pitch of zero will lead to a MAME crash in draw_graphics_line
+				// Coerce a fail-safe minimum, what should really happen is to be verified ...
+				popmessage("%s pitch == 0!", this->tag());
+				m_pitch = 2;
+			}
 
 			LOG("uPD7220 PITCH: %u\n", m_pitch);
 		}
@@ -1749,7 +1775,7 @@ void upd7220_device::update_text(bitmap_rgb32 &bitmap, const rectangle &cliprect
 		for (y = sy; y < sy + len; y++)
 		{
 			uint32_t const addr = sad + (y * m_pitch);
-			m_draw_text_cb(bitmap, addr, (y * m_lr) + m_vbp, wd, m_pitch, m_lr, m_dc, m_ead);
+			m_draw_text_cb(bitmap, addr, (y * m_lr) + m_vbp, wd, m_pitch, m_lr, m_dc, m_ead, m_ctop, m_cbot);
 		}
 
 		sy = y + 1;
@@ -1822,7 +1848,7 @@ void upd7220_device::update_graphics(bitmap_rgb32 &bitmap, const rectangle &clip
 				for(int z = 0; z <= m_disp; ++z)
 				{
 					int yval = (y*zoom)+z + (bsy + m_vbp);
-					if(yval <= cliprect.bottom())
+					if(yval <= cliprect.bottom() && (yval - m_vbp) < m_al)
 						draw_graphics_line(bitmap, addr, yval, wd, mixed);
 				}
 			}
@@ -1835,7 +1861,7 @@ void upd7220_device::update_graphics(bitmap_rgb32 &bitmap, const rectangle &clip
 				{
 					uint32_t const addr = (sad & 0x3ffff) + ((y / m_lr) * m_pitch);
 					int yval = y * zoom + (tsy + m_vbp);
-					m_draw_text_cb(bitmap, addr, yval, wd, m_pitch, m_lr, m_dc, m_ead);
+					m_draw_text_cb(bitmap, addr, yval, wd, m_pitch, m_lr, m_dc, m_ead, m_ctop, m_cbot);
 				}
 			}
 		}

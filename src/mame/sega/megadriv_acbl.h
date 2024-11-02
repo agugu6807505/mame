@@ -58,7 +58,7 @@ public:
 	void md_boot_mcu(machine_config &config);
 
 private:
-	void md_boot_mcu_map(address_map &map);
+	void md_boot_mcu_map(address_map &map) ATTR_COLD;
 
 	uint16_t mcu_r();
 	void mcu_w(uint16_t data);
@@ -114,6 +114,7 @@ public:
 	void init_mk3mdb();
 	void init_bk3ssrmb();
 	void init_barekch();
+	void init_srssf2mb();
 
 protected:
 	virtual void machine_start() override ATTR_COLD;

@@ -144,7 +144,7 @@ class isa16_calchase_jamma_if : public device_t, public device_isa16_card_interf
 public:
 	// construction/destruction
 	isa16_calchase_jamma_if(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock);
-	virtual ioport_constructor device_input_ports() const override;
+	virtual ioport_constructor device_input_ports() const override ATTR_COLD;
 
 	ioport_value heartbeat_r();
 
@@ -293,7 +293,7 @@ static INPUT_PORTS_START( calchase_jamma )
 
 	PORT_START("IOCARD3")
 //  PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_VBLANK("isa2:tgui9680:screen")
-	PORT_BIT( 0x2000, IP_ACTIVE_HIGH, IPT_CUSTOM ) PORT_CUSTOM_MEMBER(isa16_calchase_jamma_if, heartbeat_r)
+	PORT_BIT( 0x2000, IP_ACTIVE_HIGH, IPT_CUSTOM ) PORT_CUSTOM_MEMBER(FUNC(isa16_calchase_jamma_if::heartbeat_r))
 	PORT_BIT( 0xdfff, IP_ACTIVE_LOW, IPT_UNUSED )
 
 	PORT_START("IOCARD4")
@@ -337,7 +337,7 @@ static INPUT_PORTS_START( calchase_jamma )
 	PORT_DIPSETTING(    0x1000, DEF_STR( Off ) )
 	PORT_DIPSETTING(    0x0000, DEF_STR( On ) )
 //  PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_VBLANK("isa2:tgui9680:screen") // eggsplc
-	PORT_BIT( 0x2000, IP_ACTIVE_HIGH, IPT_CUSTOM ) PORT_CUSTOM_MEMBER(isa16_calchase_jamma_if, heartbeat_r)
+	PORT_BIT( 0x2000, IP_ACTIVE_HIGH, IPT_CUSTOM ) PORT_CUSTOM_MEMBER(FUNC(isa16_calchase_jamma_if::heartbeat_r))
 	PORT_DIPNAME( 0x4000, 0x4000, DEF_STR( Unknown ) )
 	PORT_DIPSETTING(    0x4000, DEF_STR( Off ) )
 	PORT_DIPSETTING(    0x0000, DEF_STR( On ) )

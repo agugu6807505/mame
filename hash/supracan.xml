@@ -17,7 +17,7 @@ Unreleased Super A'can carts:
 	<software name="formduel" supported="no">
 		<description>Formosa Duel ~ Formosa Da Dui Jue</description>
 		<year>1995</year>
-		<publisher>AV Artisan Corp.</publisher>
+		<publisher>AV Artisan</publisher>
 		<notes><![CDATA[
 [sound] noisy channels 13-15 starting from character screen, supposed to release after a while (12 00 0f 79)
 game over screen uses a RNG register for rain scroll (verify)
@@ -78,9 +78,8 @@ Broken [video] during intro, uses bitmap mode with ROZ layer
 	<software name="speedyd" supported="no">
 		<description>Speedy Dragon ~ Yin Su Fei Long</description>
 		<year>1995</year>
-		<publisher>AV Artisan Corp.</publisher>
+		<publisher>AV Artisan</publisher>
 		<notes><![CDATA[
-[video] title animation glitches some sprites.
 [video] uses per-tile priority during gameplay.
 [sound] noisy channels 13-15 when jump occurs (12 00 0f 79)
 [sound] jump (1f 0f 0e a9) and attack (1f 00 0f 69) channels 11-12 keeps repeating
@@ -205,7 +204,6 @@ Erratic gameplay speed, controls [irq 3] as FRC
 [sound] BGM plays random tune on title (verify, two video refs plays different BGMs there wtf?)
 [video] title screen doesn't cliprect properly against white
 [video] title screen has priority issues with overlapping overlays (layer 1 + ROZ)
-[video] garbage sprites in 1p vs. com gameplay, [DMA]s with invalid dest pointers.
 [sound] main menu selection channel 14 keeps repeating (1f 15 0b dd)
 ]]></notes>
 		<info name="serial" value="F010" />
@@ -223,6 +221,7 @@ Erratic gameplay speed, controls [irq 3] as FRC
 		<publisher>Funtech</publisher>
 		<notes><![CDATA[
 Uses [video] clipping for layer 1 during intro
+Should use unemulated [video] interlace (verify on HW)
 ]]></notes>
 		<info name="serial" value="F011" />
 		<info name="alt_title" value="爆爆動物園" />
@@ -236,7 +235,12 @@ Uses [video] clipping for layer 1 during intro
 	<software name="rebelst" supported="no">
 		<description>Rebel Star ~ Pàn Xīng</description>
 		<year>1996</year>
-		<publisher>Horng Shen Information Co., Ltd</publisher>
+		<publisher>Horng Shen Information</publisher>
+		<notes><![CDATA[
+[video] ROZ layer is concealed on intro.
+[video] ROZ layer should blend hex grids.
+[video] select attack screens should blend as well (uses sprites)
+]]></notes>
 		<info name="serial" value="F012" />
 		<info name="alt_title" value="叛星" />
 		<part name="cart" interface="superacan_cart">

@@ -41,7 +41,7 @@
 //**************************************************************************
 
 #define UPD7220_DISPLAY_PIXELS_MEMBER(_name) void _name(bitmap_rgb32 &bitmap, int y, int x, uint32_t address)
-#define UPD7220_DRAW_TEXT_LINE_MEMBER(_name) void _name(bitmap_rgb32 &bitmap, uint32_t addr, int y, int wd, int pitch, int lr, int cursor_on, int cursor_addr)
+#define UPD7220_DRAW_TEXT_LINE_MEMBER(_name) void _name(bitmap_rgb32 &bitmap, uint32_t addr, int y, int wd, int pitch, int lr, int cursor_on, int cursor_addr, int cursor_bot, int cursor_top)
 
 
 //**************************************************************************
@@ -57,10 +57,18 @@ class upd7220_device :  public device_t,
 {
 public:
 	using display_pixels_delegate = device_delegate<void (bitmap_rgb32 &bitmap, int y, int x, uint32_t address)>;
-	using draw_text_delegate = device_delegate<void (bitmap_rgb32 &bitmap, uint32_t addr, int y, int wd, int pitch, int lr, int cursor_on, int cursor_addr)>;
+	using draw_text_delegate = device_delegate<void (bitmap_rgb32 &bitmap, uint32_t addr, int y, int wd, int pitch, int lr, int cursor_on, int cursor_addr, int cursor_bot, int cursor_top)>;
 
 	// construction/destruction
 	upd7220_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock);
+
+	template <typename T>
+	upd7220_device(const machine_config &mconfig, const char *tag, device_t *owner, u32 clock, T &&screen_tag)
+		: upd7220_device(mconfig, tag, owner, clock)
+	{
+		set_screen(std::forward<T>(screen_tag));
+	}
+
 
 	template <typename... T> void set_display_pixels(T &&... args) { m_display_cb.set(std::forward<T>(args)...); }
 	template <typename... T> void set_draw_text(T &&... args) { m_draw_text_cb.set(std::forward<T>(args)...); }
@@ -85,10 +93,10 @@ protected:
 	upd7220_device(const machine_config &mconfig, device_type type, const char *tag, device_t *owner, uint32_t clock);
 
 	// device_t overrides
-	virtual void device_start() override;
-	virtual void device_reset() override;
+	virtual void device_start() override ATTR_COLD;
+	virtual void device_reset() override ATTR_COLD;
 
-	virtual const tiny_rom_entry *device_rom_region() const override;
+	virtual const tiny_rom_entry *device_rom_region() const override ATTR_COLD;
 	virtual space_config_vector memory_space_config() const override;
 
 	virtual int translate_command(uint8_t data);
@@ -134,7 +142,7 @@ private:
 	void draw_graphics_line(bitmap_rgb32 &bitmap, uint32_t addr, int y, int wd, int mixed);
 	void update_graphics(bitmap_rgb32 &bitmap, const rectangle &cliprect, int force_bitmap);
 
-	void upd7220_vram(address_map &map);
+	void upd7220_vram(address_map &map) ATTR_COLD;
 
 	display_pixels_delegate     m_display_cb;
 	draw_text_delegate          m_draw_text_cb;
@@ -223,7 +231,7 @@ public:
 	upd7220a_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock);
 
 protected:
-	virtual const tiny_rom_entry *device_rom_region() const override;
+	virtual const tiny_rom_entry *device_rom_region() const override ATTR_COLD;
 
 	virtual int translate_command(uint8_t data) override;
 };
